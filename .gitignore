@@ -1,0 +1,12 @@
+# Derleme çıktıları
+bin/
+obj/
+
+# Visual Studio kullanıcıya özel dosyalar
+.vs/
+*.user
+*.suo
+
+# İşletim sistemi dosyaları
+.DS_Store
+Thumbs.db

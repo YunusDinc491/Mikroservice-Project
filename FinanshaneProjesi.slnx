@@ -1,0 +1,16 @@
+<Solution>
+  <Project Path="Finanshane.Application/Finanshane.Application.csproj" />
+  <Project Path="Finanshane.Contracts/Finanshane.Contracts.csproj" />
+  <Project Path="Finanshane.Domain/Finanshane.Domain.csproj" />
+  <Project Path="Finanshane.Gateaway/Finanshane.Gateway.csproj" />
+  <Project Path="Finanshane.Infrastructure/Finanshane.Infrastructure.csproj" />
+  <Project Path="Finanshane.MarketData.Api/Finanshane.MarketData.Api.csproj" />
+  <Project Path="Finanshane.MarketData.Application/Finanshane.MarketData.Application.csproj" />
+  <Project Path="Finanshane.MarketData.Domain/Finanshane.MarketData.Domain.csproj" />
+  <Project Path="Finanshane.MarketData.Infrastructure/Finanshane.MarketData.Infrastructure.csproj" />
+  <Project Path="Finanshane.Portfolio.Api/Finanshane.Portfolio.Api.csproj" />
+  <Project Path="Finanshane.Portfolio.Application/Finanshane.Portfolio.Application.csproj" />
+  <Project Path="Finanshane.Portfolio.Domain/Finanshane.Portfolio.Domain.csproj" />
+  <Project Path="Finanshane.Portfolio.Infrastructure/Finanshane.Portfolio.Infrastructure.csproj" />
+  <Project Path="Finanshane/Finanshane.Api.csproj" />
+</Solution>
