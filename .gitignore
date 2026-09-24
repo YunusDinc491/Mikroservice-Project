@@ -10,3 +10,6 @@ obj/
 # İşletim sistemi dosyaları
 .DS_Store
 Thumbs.db
+
+
+appsettings.Development.json
