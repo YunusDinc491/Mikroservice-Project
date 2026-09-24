@@ -1,4 +1,4 @@
-﻿using Finanshane.Application.Commands;
+using Finanshane.Application.Commands;
 using Finanshane.Application.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -22,15 +22,29 @@ namespace Finanshane.Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterUserCommand command)
         {
-            var userId = await _mediator.Send(command);
-            return Ok(new {UserId = userId});
+            try
+            {
+                var userId = await _mediator.Send(command);
+                return Ok(new { UserId = userId });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginQuery query)
         {
-            var token = await _mediator.Send(query);
-            return Ok(new { Token = token });
+            try
+            {
+                var token = await _mediator.Send(query);
+                return Ok(new { Token = token });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
         }
 
     }
