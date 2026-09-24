@@ -13,6 +13,9 @@ builder.Services.AddHttpClient<ICryptoPriceService, CoinGeckoService>(client =>
     client.BaseAddress = new Uri("https://api.coingecko.com/");
     client.DefaultRequestHeaders.Add("User-Agent", "Finanshane/1.0");
 });
+
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -26,5 +29,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 app.Run();

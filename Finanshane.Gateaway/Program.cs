@@ -19,8 +19,11 @@ builder.Services.AddRateLimiter(options =>
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
     });
 
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
 app.UseRateLimiter();
 app.MapReverseProxy().RequireRateLimiting("fixed");
+app.MapHealthChecks("/health");
 
 app.Run();

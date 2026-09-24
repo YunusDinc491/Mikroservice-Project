@@ -57,7 +57,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 });
 builder.Services.AddAuthorization();
 
-
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
@@ -77,5 +77,6 @@ app.UseAuthorization();
 
 
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 app.Run();

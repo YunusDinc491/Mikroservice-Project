@@ -1,4 +1,4 @@
-﻿using Finanshane.Portfolio.Application.Interfaces;
+using Finanshane.Portfolio.Application.Interfaces;
 using Finanshane.Portfolio.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -25,6 +25,21 @@ namespace Finanshane.Portfolio.Infrastructure.Persistence
         public async Task<PortfolioAccount?> GetByUserIdAsync(Guid userId)
         {
             return await _context.PortfolioAccounts.FirstOrDefaultAsync(p => p.UserId == userId);
+        }
+
+        public async Task<Holding?> GetHoldingAsync(Guid portfolioId, string symbol)
+        {
+            return await _context.Holdings.FirstOrDefaultAsync(h => h.PortfolioId == portfolioId && h.Symbol == symbol);
+        }
+
+        public async Task AddHoldingAsync(Holding holding)
+        {
+            await _context.Holdings.AddAsync(holding);
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Finanshane.Portfolio.Application.Queries;
+using Finanshane.Portfolio.Application.Commands;
+using Finanshane.Portfolio.Application.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -30,8 +31,8 @@ namespace Finanshane.Portfolio.Api.Controllers
             {
                 return Forbid();
             }
-            
-            
+
+
             var portfolio = await _mediator.Send(new GetPortfolioQuery(userId));
 
             if (portfolio is null)
@@ -41,5 +42,48 @@ namespace Finanshane.Portfolio.Api.Controllers
             return Ok(portfolio);
         }
 
+        [HttpPost("{userId}/buy")]
+        public async Task<IActionResult> Buy(Guid userId, [FromBody] BuyRequest request)
+        {
+            var tokenUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (tokenUserId == null || tokenUserId != userId.ToString())
+            {
+                return Forbid();
+            }
+
+            try
+            {
+                var result = await _mediator.Send(new BuyCryptoCommand(userId, request.Symbol, request.AmountUsd));
+                return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPost("{userId}/sell")]
+        public async Task<IActionResult> Sell(Guid userId, [FromBody] SellRequest request)
+        {
+            var tokenUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (tokenUserId == null || tokenUserId != userId.ToString())
+            {
+                return Forbid();
+            }
+
+            try
+            {
+                var result = await _mediator.Send(new SellCryptoCommand(userId, request.Symbol, request.Quantity));
+                return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
     }
+
+    public record BuyRequest(string Symbol, decimal AmountUsd);
+    public record SellRequest(string Symbol, decimal Quantity);
 }

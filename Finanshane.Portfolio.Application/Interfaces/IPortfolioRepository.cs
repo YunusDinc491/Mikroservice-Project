@@ -1,4 +1,4 @@
-﻿using Finanshane.Portfolio.Domain.Entities;
+using Finanshane.Portfolio.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,5 +9,8 @@ namespace Finanshane.Portfolio.Application.Interfaces
     {
         Task<PortfolioAccount?> GetByUserIdAsync(Guid userId);
         Task AddAsync(PortfolioAccount portfolioAccount);
+        Task<Holding?> GetHoldingAsync(Guid portfolioId, string symbol);
+        Task AddHoldingAsync(Holding holding);
+        Task SaveChangesAsync();
     }
 }
