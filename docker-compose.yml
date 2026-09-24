@@ -1,0 +1,107 @@
+services:
+  identity-db:
+    image: postgres:17-alpine
+    container_name: finanshane-identity-db
+    environment:
+      POSTGRES_DB: identitydb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5434:5432"
+    volumes:
+      - identity-db-data:/var/lib/postgresql/data
+
+  portfolio-db:
+    image: postgres:17-alpine
+    container_name: finanshane-portfolio-db
+    environment:
+      POSTGRES_DB: portfoliodb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5435:5432"
+    volumes:
+      - portfolio-db-data:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: finanshane-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  identity-api:
+    build:
+      context: .
+      dockerfile: Finanshane/Dockerfile
+    container_name: finanshane-identity-api
+    depends_on:
+      - identity-db
+      - rabbitmq
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__IdentityDb: Host=identity-db;Port=5432;Database=identitydb;Username=postgres;Password=${POSTGRES_PASSWORD}
+      Jwt__Key: ${JWT_KEY}
+      Jwt__Issuer: FinanshaneIdentity
+      Jwt__Audience: FinanshaneClients
+      Jwt__ExpiryMinutes: 60
+      RabbitMq__Host: rabbitmq
+      RabbitMq__Username: ${RABBITMQ_USER}
+      RabbitMq__Password: ${RABBITMQ_PASSWORD}
+    ports:
+      - "8081:8080"
+
+  portfolio-api:
+    build:
+      context: .
+      dockerfile: Finanshane.Portfolio.Api/Dockerfile
+    container_name: finanshane-portfolio-api
+    depends_on:
+      - portfolio-db
+      - rabbitmq
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__PortfolioDb: Host=portfolio-db;Port=5432;Database=portfoliodb;Username=postgres;Password=${POSTGRES_PASSWORD}
+      RabbitMq__Host: rabbitmq
+      RabbitMq__Username: ${RABBITMQ_USER}
+      RabbitMq__Password: ${RABBITMQ_PASSWORD}
+    ports:
+      - "8082:8080"
+
+  marketdata-api:
+    build:
+      context: .
+      dockerfile: Finanshane.MarketData.Api/Dockerfile
+    container_name: finanshane-marketdata-api
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_ENVIRONMENT: Production
+    ports:
+      - "8083:8080"
+
+  gateway-api:
+    build:
+      context: .
+      dockerfile: Finanshane.Gateaway/Dockerfile
+    container_name: finanshane-gateway-api
+    depends_on:
+      - identity-api
+      - portfolio-api
+      - marketdata-api
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_ENVIRONMENT: Production
+      ReverseProxy__Clusters__identity-cluster__Destinations__identity-destination__Address: http://identity-api:8080/
+      ReverseProxy__Clusters__portfolio-cluster__Destinations__portfolio-destination__Address: http://portfolio-api:8080/
+      ReverseProxy__Clusters__marketdata-cluster__Destinations__marketdata-destination__Address: http://marketdata-api:8080/
+    ports:
+      - "8080:8080"
+
+volumes:
+  identity-db-data:
+  portfolio-db-data:
