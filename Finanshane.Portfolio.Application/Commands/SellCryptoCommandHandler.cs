@@ -1,4 +1,5 @@
 using Finanshane.Portfolio.Application.Interfaces;
+using Finanshane.Portfolio.Domain.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -55,6 +56,18 @@ namespace Finanshane.Portfolio.Application.Commands
 
             holding.Quantity -= request.Quantity;
             portfolio.CashBalance += receivedUsd;
+
+            await _portfolioRepository.AddTransactionAsync(new Transaction
+            {
+                Id = Guid.NewGuid(),
+                PortfolioId = portfolio.Id,
+                Type = TransactionType.Sell,
+                Symbol = symbol,
+                Quantity = request.Quantity,
+                PricePerUnit = price.Value,
+                TotalUsd = receivedUsd,
+                CreatedAt = DateTime.UtcNow
+            });
 
             await _portfolioRepository.SaveChangesAsync();
 

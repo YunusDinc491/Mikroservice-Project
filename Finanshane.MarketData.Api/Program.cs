@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddSwaggerGen();
+builder.Services.AddMemoryCache();
 builder.Services.AddHttpClient<ICryptoPriceService, CoinGeckoService>(client =>
 {
     client.BaseAddress = new Uri("https://api.coingecko.com/");

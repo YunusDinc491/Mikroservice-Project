@@ -11,6 +11,9 @@ namespace Finanshane.Portfolio.Application.Interfaces
         Task AddAsync(PortfolioAccount portfolioAccount);
         Task<Holding?> GetHoldingAsync(Guid portfolioId, string symbol);
         Task AddHoldingAsync(Holding holding);
+        Task<List<Holding>> GetHoldingsAsync(Guid portfolioId);
+        Task AddTransactionAsync(Transaction transaction);
+        Task<List<Transaction>> GetTransactionsAsync(Guid portfolioId, int limit);
         Task SaveChangesAsync();
     }
 }

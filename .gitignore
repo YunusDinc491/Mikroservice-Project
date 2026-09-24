@@ -15,3 +15,10 @@ Thumbs.db
 appsettings.Development.json
 
 .env
+
+# Frontend build output & deps (Finanshane.Web has its own .gitignore too)
+node_modules/
+dist/
+
+# Kaynak video/foto arşivi - kullanılan kopya Finanshane.Web/public/video içinde
+/foto ve video/

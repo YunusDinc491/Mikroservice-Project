@@ -72,6 +72,18 @@ namespace Finanshane.Portfolio.Application.Commands
 
             portfolio.CashBalance -= request.AmountUsd;
 
+            await _portfolioRepository.AddTransactionAsync(new Transaction
+            {
+                Id = Guid.NewGuid(),
+                PortfolioId = portfolio.Id,
+                Type = TransactionType.Buy,
+                Symbol = symbol,
+                Quantity = quantity,
+                PricePerUnit = price.Value,
+                TotalUsd = request.AmountUsd,
+                CreatedAt = DateTime.UtcNow
+            });
+
             await _portfolioRepository.SaveChangesAsync();
 
             return new BuyCryptoResult(symbol, quantity, price.Value, portfolio.CashBalance);

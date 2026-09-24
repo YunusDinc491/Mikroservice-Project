@@ -42,6 +42,32 @@ namespace Finanshane.Portfolio.Api.Controllers
             return Ok(portfolio);
         }
 
+        [HttpGet("{userId}/holdings")]
+        public async Task<IActionResult> GetHoldings(Guid userId)
+        {
+            var tokenUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (tokenUserId == null || tokenUserId != userId.ToString())
+            {
+                return Forbid();
+            }
+
+            var holdings = await _mediator.Send(new GetHoldingsQuery(userId));
+            return Ok(holdings);
+        }
+
+        [HttpGet("{userId}/transactions")]
+        public async Task<IActionResult> GetTransactions(Guid userId, [FromQuery] int limit = 20)
+        {
+            var tokenUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (tokenUserId == null || tokenUserId != userId.ToString())
+            {
+                return Forbid();
+            }
+
+            var transactions = await _mediator.Send(new GetTransactionsQuery(userId, limit));
+            return Ok(transactions);
+        }
+
         [HttpPost("{userId}/buy")]
         public async Task<IActionResult> Buy(Guid userId, [FromBody] BuyRequest request)
         {

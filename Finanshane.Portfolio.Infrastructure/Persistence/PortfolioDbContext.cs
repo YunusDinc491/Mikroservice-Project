@@ -13,6 +13,7 @@ namespace Finanshane.Portfolio.Infrastructure.Persistence
 
         public DbSet<PortfolioAccount> PortfolioAccounts => Set<PortfolioAccount>();
         public DbSet<Holding> Holdings => Set<Holding>();
+        public DbSet<Transaction> Transactions => Set<Transaction>();
 
 
 
